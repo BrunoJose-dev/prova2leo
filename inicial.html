@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Formulário</title>
+    <style>
+        /* Seus estilos existentes aqui... */
+
+        .button1 {
+            background-color: #cc0000;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .button2 {
+            background-color: dodgerblue;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        /* Estilos gerais */
+body {
+    background: linear-gradient(to bottom right, #87CEFA, #663399);
+
+    font-family: Arial, sans-serif;
+    margin: 20px;
+
+}
+label{
+    color: white;
+}
+
+h2 {
+    color: #333;
+}
+
+/* Estilos do formulário */
+#meuFormulario {
+    max-width: 400px;
+    margin-bottom: 20px;
+    
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input,
+textarea,
+button {
+    margin-bottom: 10px;
+}
+
+/* Estilos da tabela */
+#tabelaDados {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    background-color:aquamarine;
+}
+
+#tabelaDados th,
+#tabelaDados td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#tabelaDados th {
+    background-color: #f2f2f2;
+}
+
+/* Estilos do botão de exclusão na tabela */
+button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #cc0000;
+}
+.formulario{
+    background-color: #333;
+    border-radius: 2%;
+    text-align: center;
+    padding: 10%;
+}
+
+    </style>
+</head>
+<body>
+
+<h2>Formulário de Contato</h2>
+
+<form id="meuFormulario" action="/processar-formulario" method="post">
+    <div class="formulario">
+    <!-- Campo de Nome -->
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
+
+    <br>
+
+    <!-- Campo de E-mail -->
+    <label for="email">E-mail:</label>
+    <input type="email" id="email" name="email" required>
+
+    <br>
+
+    <!-- Campo de Mensagem -->
+    <label for="mensagem">Mensagem:</label>
+    <textarea id="mensagem" name="mensagem" rows="4" required></textarea>
+
+    <br>
+
+    <!-- Botão de Envio -->
+    <button type="button" onclick="processarFormulario()">Enviar</button>
+    </div>
+</form>
+
+<!-- Tabela para exibir os dados do formulário -->
+<h2>Dados do Formulário</h2>
+<table border="1" id="tabelaDados">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Mensagem</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody id="corpoTabela"></tbody>
+</table>
+
+<script>
+    // Array para armazenar os dados do formulário
+    const dadosArray = [];
+
+    // Variável para rastrear a linha sendo editada
+    let linhaEditando = null;
+
+    // Função para processar o formulário
+    function processarFormulario() {
+        // Obter os valores dos campos do formulário
+        const nome = document.getElementById("nome").value;
+        const email = document.getElementById("email").value;
+        const mensagem = document.getElementById("mensagem").value;
+
+        // Verificar se é uma edição ou uma adição
+        if (linhaEditando !== null) {
+            // Edição: Atualiza os valores na linha existente
+            dadosArray[linhaEditando] = { nome, email, mensagem };
+            linhaEditando = null; // Reseta a variável de edição
+        } else {
+            // Adição: Adiciona um novo objeto ao array
+            const dadosFormulario = { nome, email, mensagem };
+            dadosArray.push(dadosFormulario);
+        }
+
+        // Limpar os campos do formulário
+        document.getElementById("meuFormulario").reset();
+
+        // Exibir os dados na tabela
+        exibirDadosNaTabela();
+    }
+
+    // Função para exibir os dados na tabela
+    function exibirDadosNaTabela() {
+        // Obter a referência ao corpo da tabela
+        const corpoTabela = document.getElementById('corpoTabela');
+
+        // Limpar o corpo da tabela
+        corpoTabela.innerHTML = '';
+
+        // Iterar sobre o array e adicionar linhas à tabela
+        dadosArray.forEach((dados, index) => {
+            const linha = document.createElement('tr');
+            linha.innerHTML = `<td>${dados.nome}</td><td>${dados.email}</td><td>${dados.mensagem}</td><td>
+                <button class="button1" onclick="excluirLinha(${index})">Excluir</button>
+                <button class="button2" onclick="editarLinha(${index})">Editar</button></td>`;
+            corpoTabela.appendChild(linha);
+        });
+    }
+
+    // Função para excluir uma linha da tabela
+    function excluirLinha(index) {
+        // Remove o item do array com base no índice
+        dadosArray.splice(index, 1);
+        
+        // Exibe novamente os dados na tabela
+        exibirDadosNaTabela();
+    }
+
+    // Função para editar uma linha da tabela
+    function editarLinha(index) {
+        // Preenche os campos do formulário com os valores da linha selecionada
+        const dados = dadosArray[index];
+        document.getElementById("nome").value = dados.nome;
+        document.getElementById("email").value = dados.email;
+        document.getElementById("mensagem").value = dados.mensagem;
+
+        // Define a variável de edição
+        linhaEditando = index;
+    }
+</script>
+
+</body>
+</html>
